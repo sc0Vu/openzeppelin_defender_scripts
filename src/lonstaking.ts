@@ -1,7 +1,7 @@
 // import { RelayerParams } from 'defender-relay-client/lib/relayer'
 // import { DefenderRelaySigner, DefenderRelayProvider } from 'defender-relay-client/lib/ethers'
 // import { ethers } from 'ethers'
-
+import axios from 'axios'
 import { healthCheckTokenSubgraph, fetchStakingDashboard, fetchStakingData, fetchMultiTokenLatestInfo } from './subgraph'
 import BN from 'bignumber.js'
 
@@ -9,10 +9,12 @@ type SecretInfo = {
   lon: string;
   user: string;
   thresholdLon: string;
+  tgToken: string;
+  chatID: string;
 }
 
-export async function handler({ secrets }) {
-  const { lon, user, thresholdLon } = secrets
+export async function handler({ secrets }: { secrets: SecretInfo }) {
+  const { lon, user, thresholdLon, tgToken, chatID } = secrets
   if (!lon || !user || !thresholdLon) {
     console.warn('Should set secrect properly')
     return
@@ -34,8 +36,13 @@ export async function handler({ secrets }) {
     const tokenPriceUSD = new BN(tokenInfo.tokens[0].derivedETH).multipliedBy(new BN(tokenInfo.ethPrice))
     console.log('Total earned in USD: ', (tokenPriceUSD.multipliedBy(gainLon)).toString())
     if (!gainLon.lt(threshold)) {
-      // TODO: tg bot
-      // should notify
+      const message = `The lon staking value exceeds the threshold value ${gainLon.toString()} > ${thresholdLon}`
+      const res = await axios.get(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${chatID}&text=${message}`)
+      if (res.data.ok) {
+        console.log('Success to notify user in telegram')
+      } else {
+        console.log('Failed to notify user in telegram')
+      }
     }
   }
 }
@@ -43,8 +50,8 @@ export async function handler({ secrets }) {
 // To run locally (this code will not be executed in Autotasks)
 if (require.main === module) {
   require('dotenv').config();
-  const { lon, user, thresholdLon } = process.env as SecretInfo
-  handler({ secrets: { lon, user, thresholdLon } })
+  const { lon, user, thresholdLon, tgToken, chatID } = process.env as SecretInfo
+  handler({ secrets: { lon, user, thresholdLon, tgToken, chatID } })
     .then(() => process.exit(0))
     .catch((error: Error) => { console.error(error); process.exit(1); });
 }
