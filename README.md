@@ -1,7 +1,7 @@
 # Openzeppelin Defender Scripts
 This repository collect fun scripts that run on openzeppelin defender autotask
 
-* lonstaking
+### lonstaking
 This script will lookup the user's current staking and calculate how many Lon token will earn if redeem at the execution time. Instead showing the total income in token, you can find the total income in USD which calculate from the Uniswap token information. You can also set the threshold value to notify if the earning exceeds the value (in token not in USD).
 
 ## Running Locally
