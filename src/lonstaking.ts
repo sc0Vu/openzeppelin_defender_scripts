@@ -15,7 +15,7 @@ type SecretInfo = {
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
   const { lon, user, thresholdLon, tgToken, chatID } = secrets
-  if (!lon || !user || !thresholdLon) {
+  if (!lon || !user || !thresholdLon || !tgToken || !chatID) {
     console.warn('Should set secrect properly')
     return
   }
