@@ -71,6 +71,43 @@ export const fetchMultiTokenLatestInfo = async (tokens: string[]) => {
   }
 }
 
+export const fetchPairLatestInfo = async (pair: string) => {
+  const query = gql`
+    query QueryPairInfo(
+      $pair: ID!
+    ) {
+      pairs(
+        where: {
+          id: $pair
+        }
+      ) {
+        token0 {
+          symbol
+          name
+          derivedETH
+        }
+        token1 {
+          symbol
+          name
+          derivedETH
+        }
+        volumeUSD
+        txCount
+      }
+      bundle(id: 1) {
+        ethPrice
+      }
+    }
+  `
+  const resp = await request(UNISWAP_V2_THEGRAPH, query, {
+    pair: pair.toLowerCase()
+  })
+  return {
+    ethPrice: resp.bundle.ethPrice,
+    pair: resp.pairs[0]
+  }
+}
+
 export interface TokenlonStakingDashboard {
   totalStakedAmount: string
   totalXlonSupply: string
@@ -140,4 +177,30 @@ export const fetchStakingData = async (userAddr: string): Promise<TokenlonStakin
     return stakeds
   }
   throw new Error('Fail to fetch staked date for user')
+}
+
+export const fetchTradedTokens = async () => {
+  const query = gql`
+    query TradedTokens(
+      $orderBy: String
+    ) {
+      tradedTokens (
+        orderBy: $orderBy,
+        orderDirection: asc
+      ) {
+        contractAddress:address
+        symbol
+        decimal:decimals
+        name
+        startDate
+      }
+    }
+  `
+  const resp = await request(TOKENLON_STAKING_THEGRAPH, query, {
+    orderBy: 'startDate'
+  })
+  if (resp.tradedTokens) {
+    return resp.tradedTokens
+  }
+  throw new Error('Fail to fetch tokenlon traded tokens')
 }
