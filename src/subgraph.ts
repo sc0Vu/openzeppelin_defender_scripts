@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 import { request, gql } from 'graphql-request'
 
 export const UNISWAP_V2_THEGRAPH = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'
-export const TOKENLON_STAKING_THEGRAPH = 'https://api.thegraph.com/subgraphs/id/QmP8Gcdxpz9ZQo58WDbCHVhoo53MSTBtHV6C4bEhMycJXR'
+export const TOKENLON_STAKING_THEGRAPH = 'https://api.thegraph.com/subgraphs/name/consenlabs/tokenlon-v5-staking'
 
 export const healthCheckTokenSubgraph = async () => {
   const healthCheck = 'https://api.thegraph.com/index-node/graphql'
