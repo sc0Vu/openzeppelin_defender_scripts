@@ -6,7 +6,8 @@
   "scripts": {
     "build": "rollup -c",
     "start_lonstaking": "node dist/lonstaking.js",
-    "start_watchuniswappair": "node dist/watchuniswappair.js"
+    "start_watchuniswappair": "node dist/watchuniswappair.js",
+    "start_watchminer": "node dist/watchminer.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",

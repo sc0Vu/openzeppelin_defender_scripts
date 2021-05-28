@@ -33,4 +33,11 @@ export default [{
     format: 'cjs',
   },
   ...baseConfig
+}, {
+  input: 'src/watchminer.ts',
+  output: {
+    file: 'dist/watchminer.js',
+    format: 'cjs',
+  },
+  ...baseConfig
 }];
