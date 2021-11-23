@@ -7,7 +7,8 @@
     "build": "rollup -c",
     "start_lonstaking": "node dist/lonstaking.js",
     "start_watchuniswappair": "node dist/watchuniswappair.js",
-    "start_watchminer": "node dist/watchminer.js"
+    "start_watchminer": "node dist/watchminer.js",
+    "start_ftxlending": "node dist/ftxlending.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",
@@ -22,6 +23,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^3.3.0",
     "bignumber.js": "^9.0.1",
+    "ccxt": "^1.62.9",
     "defender-relay-client": "^1.1.0",
     "dotenv": "^8.2.0",
     "ethers": "5.0.3",

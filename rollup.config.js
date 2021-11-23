@@ -16,6 +16,7 @@ const baseConfig = {
     'web3',
     'axios',
     /^defender-relay-client(\/.*)?$/,
+    'ccxt'
   ],
 }
 
@@ -37,6 +38,13 @@ export default [{
   input: 'src/watchminer.ts',
   output: {
     file: 'dist/watchminer.js',
+    format: 'cjs',
+  },
+  ...baseConfig
+}, {
+  input: 'src/ftxlending.ts',
+  output: {
+    file: 'dist/ftxlending.js',
     format: 'cjs',
   },
   ...baseConfig
