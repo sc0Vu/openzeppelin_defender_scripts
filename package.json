@@ -23,12 +23,10 @@
   "dependencies": {
     "@openzeppelin/contracts": "^3.3.0",
     "bignumber.js": "^9.0.1",
-    "ccxt": "^1.62.9",
     "defender-relay-client": "^1.1.0",
     "dotenv": "^8.2.0",
     "ethers": "5.0.3",
     "graphql": "^15.5.0",
-    "graphql-request": "^3.4.0",
-    "web3": "1.2.9"
+    "graphql-request": "^3.4.0"
   }
 }

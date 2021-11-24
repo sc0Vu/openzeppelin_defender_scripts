@@ -1,6 +1,6 @@
-import ccxt from 'ccxt'
 import axios from 'axios'
 import BN from 'bignumber.js'
+import crypto from 'crypto'
 
 type SecretInfo = {
   ftxAccount: string;
@@ -17,20 +17,68 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     return
   }
   const ZERO = new BN(0)
-  const client = new ccxt.ftx({
-    apiKey: ftxAPIKey,
-    secret: ftxSecret,
-    headers: {
-      'FTX-SUBACCOUNT': ftxAccount
+  const API_ENDPOINT = 'https://ftx.com'
+  const sha256Hmac = (data: string) : string => {
+    const hmac = crypto.createHmac('sha256', ftxSecret)
+    hmac.update(data)
+    return hmac.digest('hex')
+  }
+
+  const sendRequest = async (method: string, path: string, headers: Record<string,any> = {}, data: any = undefined) : Promise<Record<string,any>> => {
+    const url = `${API_ENDPOINT}${path}`
+    const timestamp = (new Date()).getTime().toString()
+    let auth = timestamp + method + path
+    let request: Record<string,any> = {
+      url,
+      method
     }
-  })
-  const res = await client.fetch_balance()
+    headers['User-Agent'] = 'ftx-lending-bot/0.1'
+    if (method == 'POST') {
+      let body = JSON.stringify(data)
+      auth += body
+      headers['Content-Type'] = 'application/json'
+      request.data = body
+    }
+    const signature = sha256Hmac(auth)
+    headers['FTX-KEY'] = ftxAPIKey
+    headers['FTX-TS'] = timestamp
+    headers['FTX-SIGN'] = signature
+    headers['FTX-SUBACCOUNT'] = ftxAccount
+    request.headers = headers
+    return await axios.request(request)
+  }
+
+  const getWalletBalance = async () : Promise<Record<string,any>> => {
+    const path = '/api/wallet/balances'
+    const method = 'GET'
+    let result = {
+      info: {}
+    }
+    const res = await sendRequest(method, path)
+    if (res.status == 200) {
+      result.info = res.data
+      return result
+    }
+    throw new Error('failed to get wallet balances')
+  }
+
+  const postSpotMarginOffers = async (data: Record<string,any>) : Promise<Record<string,any>> => {
+    const path = '/api/spot_margin/offers'
+    const method = 'POST'
+    const res = await sendRequest(method, path, {}, data)
+    if (res.status == 200) {
+      return res.data
+    }
+    throw new Error('failed to post spot margin offers')
+  }
+
+  const res = await getWalletBalance()
   if (res.info && res.info.success) {
     // loop for all coins that balance > 0
     const promises = res.info.result.filter((r: Record<string, any>) => {
       return (new BN(r.total)).gt(ZERO)
     }).map((r: Record<string, any>) => {
-      return client.private_post_spot_margin_offers({
+      return postSpotMarginOffers({
         coin: r.coin,
         size: r.total,
         rate: 1e-6

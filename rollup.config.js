@@ -13,10 +13,8 @@ const baseConfig = {
   external: [
     ...builtins,
     'ethers',
-    'web3',
     'axios',
-    /^defender-relay-client(\/.*)?$/,
-    'ccxt'
+    /^defender-relay-client(\/.*)?$/
   ],
 }
 
