@@ -1,15 +1,18 @@
 import ccxt from 'ccxt'
+import axios from 'axios'
 import BN from 'bignumber.js'
 
 type SecretInfo = {
   ftxAccount: string;
   ftxAPIKey: string;
   ftxSecret: string;
+  chatID: string;
+  tgToken: string;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { ftxAccount, ftxAPIKey, ftxSecret } = secrets
-  if (!ftxAccount || !ftxAPIKey || !ftxSecret) {
+  const { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } = secrets
+  if (!ftxAccount || !ftxAPIKey || !ftxSecret || !chatID || !tgToken) {
     console.warn('Should set secrect properly')
     return
   }
@@ -38,7 +41,11 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
       if (reses[i].success) {
         console.log(reses[i])
       } else {
-        console.log('failed to lend: ', reses[i])
+        const message = `[ftx-lending] failed to lend ${JSON.stringify(reses[i])}`
+        const res = await axios.get(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${chatID}&text=${message}`)
+        if (!res.data.ok) {
+          console.log(message)
+        }
       }
     }
     return reses
@@ -50,8 +57,8 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
 // To run locally (this code will not be executed in Autotasks)
 if (require.main === module) {
   require('dotenv').config();
-  const { ftxAccount, ftxAPIKey, ftxSecret } = process.env as SecretInfo
-  handler({ secrets: { ftxAccount, ftxAPIKey, ftxSecret } })
+  const { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } = process.env as SecretInfo
+  handler({ secrets: { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } })
     .then(() => process.exit(0))
     .catch((error: Error) => { console.error(error); process.exit(1); });
 }
