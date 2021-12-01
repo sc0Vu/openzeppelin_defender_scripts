@@ -1,8 +1,32 @@
 # Openzeppelin Defender Scripts
 This repository collect fun scripts that run on openzeppelin defender autotask
 
-### lonstaking
+> Note: these scripts are experimental, use at your own risk.
+
+### Lon Staking
 This script will lookup the user's current staking and calculate how many Lon token will earn if redeem at the execution time. Instead showing the total income in token, you can find the total income in USD which calculate from the Uniswap token information. You can also set the threshold value to notify if the earning exceeds the value (in token not in USD).
+
+```BASH
+$ npm run start_lonstaking
+```
+
+### Watch Uniswap V2 Pair
+
+This script will fetch uniswap v2 pair information from TheGraph, including tokens name and tokens price.
+
+```BASH
+$ npm run start_watchuniswappair
+```
+
+### FTX lend automatically
+
+This script will lend tokens in FTX Exchange automatically. When execute this script, it fetch balances, loop through all tokens, and submit spot margin offers for these tokens.
+
+> Remember to open a subaccount and enable option orders.
+
+```BASH
+$ npm run start_ftxlending
+```
 
 ## Running Locally
 
@@ -14,6 +38,8 @@ user=
 thresholdLon=1
 tgToken=
 chatID=
+uniswapPair=
+ftxAccount=
+ftxAPIKey=
+ftxSecret=
 ```
-
-Then run `yarn build` to compile your script, and `yarn start` that will run your script locally.
