@@ -1,9 +1,9 @@
 // import { RelayerParams } from 'defender-relay-client/lib/relayer'
 // import { DefenderRelaySigner, DefenderRelayProvider } from 'defender-relay-client/lib/ethers'
 // import { ethers } from 'ethers'
-import axios from 'axios'
 import { healthCheckTokenSubgraph, fetchStakingDashboard, fetchStakingData, fetchMultiTokenLatestInfo } from './subgraph'
 import BN from 'bignumber.js'
+import { sendTGMsg } from './utils'
 
 type SecretInfo = {
   lon: string;
@@ -37,12 +37,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     console.log('Total earned in USD: ', (tokenPriceUSD.multipliedBy(gainLon)).toString())
     if (!gainLon.lt(threshold)) {
       const message = `The lon staking value exceeds the threshold value ${gainLon.toString()} > ${thresholdLon}`
-      const res = await axios.get(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${chatID}&text=${message}`)
-      if (res.data.ok) {
-        console.log('Success to notify user in telegram')
-      } else {
-        console.log('Failed to notify user in telegram')
-      }
+      await sendTGMsg(tgToken, chatID, message)
     }
   }
 }
@@ -53,5 +48,9 @@ if (require.main === module) {
   const { lon, user, thresholdLon, tgToken, chatID } = process.env as SecretInfo
   handler({ secrets: { lon, user, thresholdLon, tgToken, chatID } })
     .then(() => process.exit(0))
-    .catch((error: Error) => { console.error(error); process.exit(1); });
+    .catch(async (error: Error) => {
+      const message = `Failed to lookup ${error.message}`
+      await sendTGMsg(tgToken, chatID, message)
+      process.exit(1)
+    })
 }

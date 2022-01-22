@@ -4,6 +4,7 @@
 import axios from 'axios'
 import { healthCheckTokenSubgraph, fetchPairLatestInfo } from './subgraph'
 import BN from 'bignumber.js'
+import { sendTGMsg } from './utils'
 
 type SecretInfo = {
   minerURL: string;
@@ -11,11 +12,6 @@ type SecretInfo = {
   thresholdMiner: number;
   tgToken: string;
   chatID: string;
-}
-
-async function sendMessage(tgToken: string, chatID: string, message: string): Promise<Boolean> {
-  const res = await axios.get(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${chatID}&text=${message}`)
-  return !!res.data.ok
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
@@ -34,12 +30,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
         // filter offlined miner
         const offlineWorkers = workers.list.filter((m: Record<string,any>) => !m.online).map(((m: Record<string,any>) => m.rig))
         message = `Workers ${workers.offline} offlined: ${offlineWorkers.join(', ')}`
-        const res = await sendMessage(tgToken, chatID, message)
-        if (res) {
-          console.log('Success to notify user in telegram')
-        } else {
-          console.log('Failed to notify user in telegram')
-        }
+        await sendTGMsg(tgToken, chatID, message)
       } else {
         // filter miners that didn't sent for five minutes
         const now = Math.floor((new Date()).getTime() / 1000)
@@ -52,12 +43,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
           message = 'Workers are all good!'
         }
         
-        const res = await sendMessage(tgToken, chatID, message)
-        if (res) {
-          console.log('Success to notify user in telegram')
-        } else {
-          console.log('Failed to notify user in telegram')
-        }
+        await sendTGMsg(tgToken, chatID, message)
       }
     } else {
       throw new Error('data was truncated from server')
@@ -73,5 +59,9 @@ if (require.main === module) {
   const { minerURL, miner, thresholdMiner, tgToken, chatID } = process.env as SecretInfo
   handler({ secrets: { minerURL, miner, thresholdMiner, tgToken, chatID } })
     .then(() => process.exit(0))
-    .catch((error: Error) => { console.error(error); process.exit(1); });
+    .catch(async (error: Error) => {
+      const message = `Failed to watch ${error.message}`
+      await sendTGMsg(tgToken, chatID, message)
+      process.exit(1)
+    })
 }

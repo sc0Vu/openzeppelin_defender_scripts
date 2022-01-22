@@ -1,6 +1,7 @@
 import axios from 'axios'
 import BN from 'bignumber.js'
 import crypto from 'crypto'
+import { sendTGMsg } from './utils'
 
 type SecretInfo = {
   ftxAccount: string;
@@ -87,13 +88,10 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     const reses: Array<Record<string, any>> = await Promise.all(promises)
     for (let i = 0; i < reses.length; i++) {
       if (reses[i].success) {
-        console.log(reses[i])
+        console.log(`[ftx-lending] lend ${res.info.result[i].coin} success`)
       } else {
         const message = `[ftx-lending] failed to lend ${JSON.stringify(reses[i])}`
-        const res = await axios.get(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${chatID}&text=${message}`)
-        if (!res.data.ok) {
-          console.log(message)
-        }
+        await sendTGMsg(tgToken, chatID, message)
       }
     }
     return reses
@@ -108,5 +106,9 @@ if (require.main === module) {
   const { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } = process.env as SecretInfo
   handler({ secrets: { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } })
     .then(() => process.exit(0))
-    .catch((error: Error) => { console.error(error); process.exit(1); });
+    .catch(async (error: Error) => {
+      const message = `[ftx-lending] failed to lend ${error.message}`
+      await sendTGMsg(tgToken, chatID, message)
+      process.exit(1)
+    })
 }
