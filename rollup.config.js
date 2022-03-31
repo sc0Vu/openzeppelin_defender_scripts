@@ -40,6 +40,13 @@ export default [{
   },
   ...baseConfig
 }, {
+  input: 'src/watchhiveonminer.ts',
+  output: {
+    file: 'dist/watchhiveonminer.js',
+    format: 'cjs',
+  },
+  ...baseConfig
+}, {
   input: 'src/ftxlending.ts',
   output: {
     file: 'dist/ftxlending.js',
