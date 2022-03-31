@@ -33,9 +33,9 @@ export default [{
   },
   ...baseConfig
 }, {
-  input: 'src/watchminer.ts',
+  input: 'src/watchgpuminer.ts',
   output: {
-    file: 'dist/watchminer.js',
+    file: 'dist/watchgpuminer.js',
     format: 'cjs',
   },
   ...baseConfig

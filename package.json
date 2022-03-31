@@ -7,7 +7,7 @@
     "build": "rollup -c",
     "start_lonstaking": "node dist/lonstaking.js",
     "start_watchuniswappair": "node dist/watchuniswappair.js",
-    "start_watchminer": "node dist/watchminer.js",
+    "start_watchgpuminer": "node dist/watchgpuminer.js",
     "start_ftxlending": "node dist/ftxlending.js"
   },
   "devDependencies": {
