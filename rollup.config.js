@@ -53,4 +53,11 @@ export default [{
     format: 'cjs',
   },
   ...baseConfig
+}, {
+  input: 'src/watchmeson.ts',
+  output: {
+    file: 'dist/watchmeson.js',
+    format: 'cjs',
+  },
+  ...baseConfig
 }];
