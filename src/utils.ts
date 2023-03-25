@@ -12,19 +12,19 @@ export const sendTGMsg = async (tgToken: string, chatID: string, message: string
 // binary operation for golang
 export function Uvarint(buf: Buffer): number {
   let x = 0, s = 0
-	for (let i=0; i<buf.length; i++) {
-	  const b = buf[i]
+  for (let i=0; i<buf.length; i++) {
+    const b = buf[i]
     // overflow
-		if (i === MaxVarintLen64) return 0
-		if (b < 0x80) {
+    if (i === MaxVarintLen64) return 0
+    if (b < 0x80) {
       // overflow
-			if (i === MaxVarintLen64-1 && b > 1) return 0
-			return x | b << s
-		}
-		x = x | (b & 0x7f) << s
-		s += 7
-	}
-	return 0
+      if (i === MaxVarintLen64-1 && b > 1) return 0
+      return x | b << s
+    }
+    x = x | (b & 0x7f) << s
+    s += 7
+  }
+  return 0
 }
 
 // binary operation for golang
