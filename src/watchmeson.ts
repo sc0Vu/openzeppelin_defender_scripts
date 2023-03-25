@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { sendTGMsg } from './utils'
+import { sendTGMsg, Uvarint, Varint } from './utils'
 
 type SecretInfo = {
   tgToken: string;
@@ -26,9 +26,8 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
       } else {
         const { response } = data.result
         const value = Buffer.from(response.value, 'base64')
-        const bufToInt = (buf: Uint8Array, filterZero=true) => (filterZero) ? parseInt((buf.filter(d => d > 0) as Buffer).toString('hex'), 16) : parseInt((buf as Buffer).toString('hex'), 16)
-        const epoch = bufToInt(value.subarray(0, 7))
-        const height = bufToInt(value.subarray(8))
+        const epoch = Uvarint(value.subarray(0, 7))
+        const height = Varint(value.subarray(8))
         message = `current height: ${response.height}, epoch ${epoch}, height: ${height}`
         await sendTGMsg(tgToken, chatID, message)
       }
