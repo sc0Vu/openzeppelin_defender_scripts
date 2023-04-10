@@ -14,6 +14,7 @@ const baseConfig = {
     ...builtins,
     'ethers',
     'axios',
+    'googleapis',
     /^defender-relay-client(\/.*)?$/
   ],
 }
@@ -57,6 +58,13 @@ export default [{
   input: 'src/watchmeson.ts',
   output: {
     file: 'dist/watchmeson.js',
+    format: 'cjs',
+  },
+  ...baseConfig
+}, {
+  input: 'src/watchgit.ts',
+  output: {
+    file: 'dist/watchgit.js',
     format: 'cjs',
   },
   ...baseConfig
