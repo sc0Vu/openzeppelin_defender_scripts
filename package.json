@@ -15,6 +15,7 @@
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
+    "@rollup/plugin-terser": "^0.4.1",
     "@rollup/plugin-typescript": "^6.1.0",
     "builtin-modules": "^3.1.0",
     "rollup": "^2.33.3",
@@ -29,6 +30,7 @@
     "ethers": "5.0.3",
     "googleapis": "^114.0.0",
     "graphql": "^15.5.0",
-    "graphql-request": "^3.4.0"
+    "graphql-request": "^3.4.0",
+    "supports-color": "^9.3.1"
   }
 }

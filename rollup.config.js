@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import builtins from 'builtin-modules';
+import terser from '@rollup/plugin-terser';
 const baseConfig = {
   plugins: [
     resolve({ preferBuiltins: true }),
@@ -10,11 +11,14 @@ const baseConfig = {
     json({ compact: true }),
     typescript(),
   ],
+  treeshake: true,
   external: [
     ...builtins,
     'ethers',
     'axios',
-    'googleapis',
+    'node:os',
+    'node:process',
+    'node:tty',
     /^defender-relay-client(\/.*)?$/
   ],
 }
@@ -66,6 +70,9 @@ export default [{
   output: {
     file: 'dist/watchgit.js',
     format: 'cjs',
+    plugins: [
+      terser(),
+    ],
   },
   ...baseConfig
 }];
