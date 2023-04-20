@@ -10,7 +10,8 @@
     "start_watchuniswappair": "node dist/watchuniswappair.js",
     "start_watchgpuminer": "node dist/watchgpuminer.js",
     "start_watchhiveonminer": "node dist/watchhiveonminer.js",
-    "start_ftxlending": "node dist/ftxlending.js"
+    "start_ftxlending": "node dist/ftxlending.js",
+    "start_watchgit": "node dist/watchgit.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",
