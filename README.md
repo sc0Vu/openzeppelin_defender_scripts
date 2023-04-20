@@ -43,3 +43,20 @@ ftxAccount=
 ftxAPIKey=
 ftxSecret=
 ```
+
+### Watch Git history
+
+This script will fetch and check whether git history had been modified with the given google sheets, remember to create a service account and google sheets before.
+
+* build
+
+```BASH
+$ npm run prebuild
+$ npm run build
+```
+
+* execute bundled script
+
+```BASH
+$ npm run start_watchgit
+```
