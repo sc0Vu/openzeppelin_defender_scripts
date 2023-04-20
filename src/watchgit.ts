@@ -1,9 +1,11 @@
 import axios from 'axios'
-import { sendTGMsg, Uvarint, Varint } from './utils'
-import { google } from 'googleapis'
+import { sendTGMsg } from './utils'
+import { sheets } from 'googleapis/build/src/apis/sheets'
+import { JWT } from 'google-auth-library'
+
 
 const createClient = async (email: string, privateKey: string) => {
-  let client = new google.auth.JWT(
+  let client = new JWT(
     email,
     null,
     privateKey,
@@ -54,9 +56,9 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
   const secretKey = JSON.parse(googleCred)
   try {
     const jwtClient = await createClient( secretKey.client_email, secretKey.private_key)
-    let sheets = google.sheets('v4')
+    let sheet = sheets('v4')
     let isUpdated = false
-    const { data } = await fetchSpreadsheet(sheets, jwtClient, sheetID, sheetRange)
+    const { data } = await fetchSpreadsheet(sheet, jwtClient, sheetID, sheetRange)
     let values = data.values
     const updatedIDs = []
     for (let i = 0; i < values.length; i++) {
@@ -95,7 +97,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
       const sheetResource = {
         values,
       }
-      const res = await updateSpreadsheet(sheets, jwtClient, sheetID, sheetRange, sheetResource)
+      const res = await updateSpreadsheet(sheet, jwtClient, sheetID, sheetRange, sheetResource)
       if (res.status !== 200) {
         console.log(res.errors)
       }
