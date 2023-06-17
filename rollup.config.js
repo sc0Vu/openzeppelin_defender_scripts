@@ -22,7 +22,8 @@ const baseConfig = {
   ],
 }
 
-export default [{
+export default [
+  {
   input: 'src/lonstaking.ts',
   output: {
     file: 'dist/lonstaking.js',
@@ -64,10 +65,21 @@ export default [{
     format: 'cjs',
   },
   ...baseConfig
-}, {
+}, 
+{
   input: 'src/watchgit.ts',
   output: {
     file: 'dist/watchgit.js',
+    format: 'cjs',
+    plugins: [
+      terser(),
+    ],
+  },
+  ...baseConfig
+}, {
+  input: 'src/watchcurve.ts',
+  output: {
+    file: 'dist/watchcurve.js',
     format: 'cjs',
     plugins: [
       terser(),
