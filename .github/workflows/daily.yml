@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: production
+      NODE_ENV: development
       tgToken: ${{ secrets.TGTOKEN }}
       sheetID: ${{ secrets.SHEETID }}
       sheetRange: ${{ secrets.SHEETRANGE }}
