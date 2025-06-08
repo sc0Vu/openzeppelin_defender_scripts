@@ -28,8 +28,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: npm install
-
-    - run: npm build
-
-    - run: npm run start_watchgit
+    - run: npm install && 
+           npm run build &&
+           npm run start_watchgit
