@@ -1,0 +1,35 @@
+name: daily job
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: production
+      tgToken: ${{ secrets.TGTOKEN }}
+      sheetID: ${{ secrets.SHEETID }}
+      sheetRange: ${{ secrets.SHEETRANGE }}
+      chatID: ${{ secrets.CHATID }}
+      googleCred: ${{ secrets.GOOGLECRED }}
+
+    strategy:
+      matrix:
+        node-version: [21.6.2]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - run: npm install
+
+    - run: npm build
+
+    - run: npm run start_watchgit
