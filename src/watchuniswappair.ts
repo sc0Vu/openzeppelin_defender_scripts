@@ -7,13 +7,13 @@ import { sendTGMsg } from './utils'
 
 type SecretInfo = {
   uniswapPair: string;
-  tgToken: string;
-  chatID: string;
+  TG_TOKEN: string;
+  CHAT_ID: string;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { uniswapPair, tgToken, chatID } = secrets
-  if (!uniswapPair || !tgToken || !chatID) {
+  const { uniswapPair, TG_TOKEN, CHAT_ID } = secrets
+  if (!uniswapPair || !TG_TOKEN || !CHAT_ID) {
     console.warn('Should set secrect properly')
     return
   }
@@ -25,19 +25,19 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     const token1Price = (new BN(pairInfo.pair.token1.derivedETH)).multipliedBy(ethPrice)
     const volumeUSD = new BN(pairInfo.pair.volumeUSD)
     const message = `Pair (${pairInfo.pair.token0.symbol}/${pairInfo.pair.token1.symbol}) (${token0Price.toPrecision(4, BN.ROUND_CEIL)}/${token1Price.toPrecision(4, BN.ROUND_CEIL)}) tx count ${pairInfo.pair.txCount}, volume in USD ${volumeUSD.toPrecision(4, BN.ROUND_CEIL)}`
-    await sendTGMsg(tgToken, chatID, message)
+    await sendTGMsg(TG_TOKEN, CHAT_ID, message)
   }
 }
 
 // To run locally (this code will not be executed in Autotasks)
 if (require.main === module) {
   require('dotenv').config();
-  const { uniswapPair, tgToken, chatID } = process.env as SecretInfo
-  handler({ secrets: { uniswapPair, tgToken, chatID } })
+  const { uniswapPair, TG_TOKEN, CHAT_ID } = process.env as SecretInfo
+  handler({ secrets: { uniswapPair, TG_TOKEN, CHAT_ID } })
     .then(() => process.exit(0))
     .catch(async (error: Error) => {
       const message = `Failed to watch ${error.message}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       process.exit(1)
     })
 }

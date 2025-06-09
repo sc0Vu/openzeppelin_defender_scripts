@@ -6,13 +6,13 @@
   "scripts": {
     "prebuild": "del-cli \"node_modules/**/@types/**\" \"node_modules/**/*.d.ts\" \"node_modules/**/.yarn-integrity\"",
     "build": "rollup -c --bundleConfigAsCjs",
-    "start_lonstaking": "node dist/lonstaking.js",
-    "start_watchuniswappair": "node dist/watchuniswappair.js",
-    "start_watchgpuminer": "node dist/watchgpuminer.js",
-    "start_watchhiveonminer": "node dist/watchhiveonminer.js",
-    "start_ftxlending": "node dist/ftxlending.js",
-    "start_watchgit": "node dist/watchgit.js",
-    "start_watchcurve": "node dist/watchcurve.js"
+    "lonstaking": "node dist/lonstaking.js",
+    "watchuniswappair": "node dist/watchuniswappair.js",
+    "watchgpuminer": "node dist/watchgpuminer.js",
+    "watchhiveonminer": "node dist/watchhiveonminer.js",
+    "ftxlending": "node dist/ftxlending.js",
+    "watchgit": "node dist/watchgit.js",
+    "watchcurve": "node dist/watchcurve.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.8",

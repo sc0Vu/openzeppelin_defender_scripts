@@ -2,14 +2,14 @@ import axios from 'axios'
 import { sendTGMsg, Uvarint, Varint } from './utils'
 
 type SecretInfo = {
-  tgToken: string;
+  TG_TOKEN: string;
   katzenmintURL: string;
-  chatID: string;
+  CHAT_ID: string;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { chatID, tgToken, katzenmintURL } = secrets
-  if (!chatID || !katzenmintURL || !tgToken) {
+  const { CHAT_ID, TG_TOKEN, katzenmintURL } = secrets
+  if (!CHAT_ID || !katzenmintURL || !TG_TOKEN) {
     console.warn('Should set secrect properly')
     return
   }
@@ -29,7 +29,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
         const epoch = Uvarint(value.subarray(0, 7))
         const height = Varint(value.subarray(8))
         message = `current height: ${response.height}, epoch ${epoch}, height: ${height}`
-        await sendTGMsg(tgToken, chatID, message)
+        await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       }
     } else {
       throw new Error('data was truncated from server')
@@ -42,12 +42,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
 
 if (require.main === module) {
   require('dotenv').config();
-  const { chatID, tgToken, katzenmintURL } = process.env as SecretInfo
-  handler({ secrets: { chatID, tgToken, katzenmintURL } })
+  const { CHAT_ID, TG_TOKEN, katzenmintURL } = process.env as SecretInfo
+  handler({ secrets: { CHAT_ID, TG_TOKEN, katzenmintURL } })
     .then(() => process.exit(0))
     .catch(async (error: Error) => {
       const message = `Failed to watch ${error.message}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       process.exit(1)
     })
 }

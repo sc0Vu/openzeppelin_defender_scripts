@@ -7,13 +7,13 @@ type SecretInfo = {
   ftxAccount: string;
   ftxAPIKey: string;
   ftxSecret: string;
-  chatID: string;
-  tgToken: string;
+  CHAT_ID: string;
+  TG_TOKEN: string;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } = secrets
-  if (!ftxAccount || !ftxAPIKey || !ftxSecret || !chatID || !tgToken) {
+  const { ftxAccount, ftxAPIKey, ftxSecret, CHAT_ID, TG_TOKEN } = secrets
+  if (!ftxAccount || !ftxAPIKey || !ftxSecret || !CHAT_ID || !TG_TOKEN) {
     console.warn('Should set secrect properly')
     return
   }
@@ -116,12 +116,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
           console.log(`[ftx-lending] lend ${res.info.result[i].coin} success`)
         } else {
           const message = `[ftx-lending] failed to lend ${res.info.result[i].coin} ${JSON.stringify(reses[i])}`
-          await sendTGMsg(tgToken, chatID, message)
+          await sendTGMsg(TG_TOKEN, CHAT_ID, message)
         }
       }
     } catch (err) {
       const message = `[ftx-lending] failed to lend ${err.response.data}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
     }
     return reses
   } else {
@@ -132,12 +132,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
 // To run locally (this code will not be executed in Autotasks)
 if (require.main === module) {
   require('dotenv').config();
-  const { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } = process.env as SecretInfo
-  handler({ secrets: { ftxAccount, ftxAPIKey, ftxSecret, chatID, tgToken } })
+  const { ftxAccount, ftxAPIKey, ftxSecret, CHAT_ID, TG_TOKEN } = process.env as SecretInfo
+  handler({ secrets: { ftxAccount, ftxAPIKey, ftxSecret, CHAT_ID, TG_TOKEN } })
     .then(() => process.exit(0))
     .catch(async (error: Error) => {
       const message = `[ftx-lending] failed to lend ${error.message}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       process.exit(1)
     })
 }

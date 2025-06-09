@@ -10,13 +10,13 @@ type SecretInfo = {
   minerURL: string;
   miner: string;
   thresholdMiner: number;
-  tgToken: string;
-  chatID: string;
+  TG_TOKEN: string;
+  CHAT_ID: string;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { minerURL, miner, thresholdMiner, tgToken, chatID } = secrets
-  if (!minerURL || !miner || !thresholdMiner || !tgToken || !chatID) {
+  const { minerURL, miner, thresholdMiner, TG_TOKEN, CHAT_ID } = secrets
+  if (!minerURL || !miner || !thresholdMiner || !TG_TOKEN || !CHAT_ID) {
     console.warn('Should set secrect properly')
     return
   }
@@ -30,7 +30,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
         // filter offlined miner
         const offlineWorkers = workers.list.filter((m: Record<string,any>) => !m.online).map(((m: Record<string,any>) => m.rig))
         message = `Workers ${workers.offline} offlined: ${offlineWorkers.join(', ')}`
-        await sendTGMsg(tgToken, chatID, message)
+        await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       } else {
         // filter miners that didn't sent for five minutes
         const now = Math.floor((new Date()).getTime() / 1000)
@@ -43,7 +43,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
           message = 'Workers are all good!'
         }
         
-        await sendTGMsg(tgToken, chatID, message)
+        await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       }
     } else {
       throw new Error('data was truncated from server')
@@ -56,12 +56,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
 // To run locally (this code will not be executed in Autotasks)
 if (require.main === module) {
   require('dotenv').config();
-  const { minerURL, miner, thresholdMiner, tgToken, chatID } = process.env as SecretInfo
-  handler({ secrets: { minerURL, miner, thresholdMiner, tgToken, chatID } })
+  const { minerURL, miner, thresholdMiner, TG_TOKEN, CHAT_ID } = process.env as SecretInfo
+  handler({ secrets: { minerURL, miner, thresholdMiner, TG_TOKEN, CHAT_ID } })
     .then(() => process.exit(0))
     .catch(async (error: Error) => {
       const message = `Failed to watch ${error.message}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       process.exit(1)
     })
 }

@@ -36,8 +36,8 @@ You can run the scripts locally, instead of in an Autotask, via a Defender Relay
 lon=0x0000000000095413afc295d19edeb1ad7b71c952
 user=
 thresholdLon=1
-tgToken=
-chatID=
+TG_TOKEN=
+CHAT_ID=
 uniswapPair=
 ftxAccount=
 ftxAPIKey=

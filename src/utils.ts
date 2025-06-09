@@ -2,8 +2,8 @@ import axios from 'axios'
 
 const MaxVarintLen64 = 10
 
-export const sendTGMsg = async (tgToken: string, chatID: string, message: string) => {
-  const res = await axios.get(`https://api.telegram.org/bot${tgToken}/sendMessage?chat_id=${chatID}&text=${message}`)
+export const sendTGMsg = async (TG_TOKEN: string, CHAT_ID: string, message: string) => {
+  const res = await axios.get(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`)
   if (!res.data.ok) {
     throw new Error('failed to send telegram message')
   }

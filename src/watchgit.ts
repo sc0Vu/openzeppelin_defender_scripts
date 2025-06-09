@@ -39,26 +39,26 @@ const fetchGitInfo = async (repo: string, path: string) => {
 }
 
 type SecretInfo = {
-  tgToken: string;
-  sheetID: string;
-  sheetRange: string;
-  chatID: string;
-  googleCred: string;
+  TG_TOKEN: string;
+  SHEET_ID: string;
+  SHEET_RANGE: string;
+  CHAT_ID: string;
+  GOOGLE_CRED: string;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { chatID, tgToken, sheetID, sheetRange, googleCred } = secrets
-  if (!chatID || !tgToken || !sheetID || !sheetRange || !googleCred) {
+  const { CHAT_ID, TG_TOKEN, SHEET_ID, SHEET_RANGE, GOOGLE_CRED } = secrets
+  if (!CHAT_ID || !TG_TOKEN || !SHEET_ID || !SHEET_RANGE || !GOOGLE_CRED) {
     console.warn('Should set secrect properly')
     return
   }
   console.log(`Start to check git commits`)
-  const secretKey = JSON.parse(googleCred)
+  const secretKey = JSON.parse(GOOGLE_CRED)
   try {
     const jwtClient = await createClient( secretKey.client_email, secretKey.private_key)
     let sheet = sheets('v4')
     let isUpdated = false
-    const { data } = await fetchSpreadsheet(sheet, jwtClient, sheetID, sheetRange)
+    const { data } = await fetchSpreadsheet(sheet, jwtClient, SHEET_ID, SHEET_RANGE)
     let values = data.values
     const updatedIDs = []
     for (let i = 0; i < values.length; i++) {
@@ -97,12 +97,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
       const sheetResource = {
         values,
       }
-      const res = await updateSpreadsheet(sheet, jwtClient, sheetID, sheetRange, sheetResource)
+      const res = await updateSpreadsheet(sheet, jwtClient, SHEET_ID, SHEET_RANGE, sheetResource)
       if (res.status !== 200) {
         console.log(res.errors)
       }
       const message = `find new git commits, please check: ${updatedIDs.join(',')}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
     }
   } catch (err) {
     console.log(`Couldn't watch git commits: ${err.message}`)
@@ -111,12 +111,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
 
 if (require.main === module) {
   require('dotenv').config();
-  const { chatID, tgToken, sheetID, sheetRange, googleCred } = process.env as SecretInfo
-  handler({ secrets: { chatID, tgToken, sheetID, sheetRange, googleCred } })
+  const { CHAT_ID, TG_TOKEN, SHEET_ID, SHEET_RANGE, GOOGLE_CRED } = process.env as SecretInfo
+  handler({ secrets: { CHAT_ID, TG_TOKEN, SHEET_ID, SHEET_RANGE, GOOGLE_CRED } })
     .then(() => process.exit(0))
     .catch(async (error: Error) => {
       const message = `Failed to watch ${error.message}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       process.exit(1)
     })
 }

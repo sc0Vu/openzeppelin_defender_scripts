@@ -9,13 +9,13 @@ type SecretInfo = {
   lon: string;
   user: string;
   thresholdLon: string;
-  tgToken: string;
-  chatID: string;
+  TG_TOKEN: string;
+  CHAT_ID: string;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { lon, user, thresholdLon, tgToken, chatID } = secrets
-  if (!lon || !user || !thresholdLon || !tgToken || !chatID) {
+  const { lon, user, thresholdLon, TG_TOKEN, CHAT_ID } = secrets
+  if (!lon || !user || !thresholdLon || !TG_TOKEN || !CHAT_ID) {
     console.warn('Should set secrect properly')
     return
   }
@@ -37,7 +37,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     console.log('Total earned in USD: ', (tokenPriceUSD.multipliedBy(gainLon)).toString())
     if (!gainLon.lt(threshold)) {
       const message = `The lon staking value exceeds the threshold value ${gainLon.toString()} > ${thresholdLon}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
     }
   }
 }
@@ -45,12 +45,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
 // To run locally (this code will not be executed in Autotasks)
 if (require.main === module) {
   require('dotenv').config();
-  const { lon, user, thresholdLon, tgToken, chatID } = process.env as SecretInfo
-  handler({ secrets: { lon, user, thresholdLon, tgToken, chatID } })
+  const { lon, user, thresholdLon, TG_TOKEN, CHAT_ID } = process.env as SecretInfo
+  handler({ secrets: { lon, user, thresholdLon, TG_TOKEN, CHAT_ID } })
     .then(() => process.exit(0))
     .catch(async (error: Error) => {
       const message = `Failed to lookup ${error.message}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       process.exit(1)
     })
 }

@@ -10,11 +10,11 @@ jobs:
 
     env:
       NODE_ENV: development
-      tgToken: ${{ secrets.TGTOKEN }}
-      sheetID: ${{ secrets.SHEETID }}
-      sheetRange: ${{ secrets.SHEETRANGE }}
-      chatID: ${{ secrets.CHATID }}
-      googleCred: ${{ secrets.GOOGLECRED }}
+      TG_TOKEN: ${{ secrets.TG_TOKEN }}
+      SHEET_ID: ${{ secrets.SHEET_ID }}
+      SHEET_RANGE: ${{ secrets.SHEET_RANGE }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
+      GOOGLE_CRED: ${{ secrets.GOOGLE_CRED }}
 
     strategy:
       matrix:
@@ -30,4 +30,4 @@ jobs:
 
     - run: npm install && 
            npm run build &&
-           npm run start_watchgit
+           npm run watchgit

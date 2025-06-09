@@ -4,16 +4,16 @@ import { sendTGMsg } from './utils'
 
 type SecretInfo = {
   curvePair: string;
-  tgToken: string;
-  chatID: string;
+  TG_TOKEN: string;
+  CHAT_ID: string;
   apiKey: string;
   threshold: string;
   notifyPairPrice: boolean;
 }
 
 export async function handler({ secrets }: { secrets: SecretInfo }) {
-  const { curvePair, tgToken, chatID, apiKey, threshold, notifyPairPrice } = secrets
-  if (!curvePair || !tgToken || !chatID || !apiKey || !threshold) {
+  const { curvePair, TG_TOKEN, CHAT_ID, apiKey, threshold, notifyPairPrice } = secrets
+  if (!curvePair || !TG_TOKEN || !CHAT_ID || !apiKey || !threshold) {
     console.warn('Should set secrect properly')
     return
   }
@@ -74,26 +74,26 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     console.log (`${crvSymbol} (${tokens[1].symbol}/${tokens[0].symbol}): ${priceBBN.div(one).toString()}`)
   } else {
     // TODO: send bulk tg message
-    await sendTGMsg(tgToken, chatID, `${crvSymbol} (${tokens[0].symbol}/${tokens[1].symbol}): price ${priceABN.div(one).toString()}`)
-    await sendTGMsg(tgToken, chatID, `${crvSymbol} (${tokens[1].symbol}/${tokens[0].symbol}): price ${priceBBN.div(one).toString()}`)
+    await sendTGMsg(TG_TOKEN, CHAT_ID, `${crvSymbol} (${tokens[0].symbol}/${tokens[1].symbol}): price ${priceABN.div(one).toString()}`)
+    await sendTGMsg(TG_TOKEN, CHAT_ID, `${crvSymbol} (${tokens[1].symbol}/${tokens[0].symbol}): price ${priceBBN.div(one).toString()}`)
   }
   const thresholdBN = new BigNumber(threshold)
   const diff = priceABN.minus(one).div(one).multipliedBy(100)
   if (diff.abs().gte(thresholdBN)) {
     const message = `${crvSymbol} (${tokens[0].symbol}/${tokens[1].symbol}) price ${priceABN.div(one).toString()} is bigger than threshold ${threshold}`
-    await sendTGMsg(tgToken, chatID, message)
+    await sendTGMsg(TG_TOKEN, CHAT_ID, message)
   }
 }
 
 // To run locally (this code will not be executed in Autotasks)
 if (require.main === module) {
   require('dotenv').config();
-  const { curvePair, tgToken, chatID, apiKey, threshold, notifyPairPrice } = process.env as SecretInfo
-  handler({ secrets: { curvePair, tgToken, chatID, apiKey, threshold, notifyPairPrice } })
+  const { curvePair, TG_TOKEN, CHAT_ID, apiKey, threshold, notifyPairPrice } = process.env as SecretInfo
+  handler({ secrets: { curvePair, TG_TOKEN, CHAT_ID, apiKey, threshold, notifyPairPrice } })
     .then(() => process.exit(0))
     .catch(async (error: Error) => {
       const message = `Failed to watch ${error.message}`
-      await sendTGMsg(tgToken, chatID, message)
+      await sendTGMsg(TG_TOKEN, CHAT_ID, message)
       process.exit(1)
     })
 }
