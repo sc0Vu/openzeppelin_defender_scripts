@@ -63,10 +63,8 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     const updatedIDs = []
     for (let i = 0; i < values.length; i++) {
       let exchange = values[i]
-      console.log(`fetch exchange git info ${exchange[0]} ...`)
       const gitInfo = await fetchGitInfo(exchange[2], exchange[3])
       if (gitInfo.length < 0) {
-        console.log(`failed to fetch exchange git info ${exchange[0]}`)
         continue
       }
       if (exchange.length < 5) {
@@ -90,7 +88,6 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
           updatedIDs.push(exchange[0])
         }
       }
-      console.log(`fetch exchange git info ${exchange[0]} successfully`)
     }
     if (updatedIDs.length > 0) {
       // update spreadsheet
@@ -105,7 +102,12 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
       await sendTGMsg(TG_TOKEN, CHAT_ID, message)
     }
   } catch (err) {
-    console.log(`Couldn't watch git commits: ${err.message}`)
+    let msg = err.message
+    if ('response' in err)  {
+      const { data } = err.response
+      msg += ' response: ' + data.message ?? ''
+    }
+    console.log(`Couldn't watch git commits: ${msg}`)
   }
 }
 
