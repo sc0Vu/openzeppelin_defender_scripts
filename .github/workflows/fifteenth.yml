@@ -1,0 +1,33 @@
+name: daily job
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: development
+      TG_TOKEN: ${{ secrets.TG_TOKEN }}
+      SHEET_ID: ${{ secrets.SHEET_ID }}
+      WEB_SHEET_RANGE: ${{ secrets.WEB_SHEET_RANGE }}
+      CHAT_ID: ${{ secrets.CHAT_ID }}
+      GOOGLE_CRED: ${{ secrets.GOOGLE_CRED }}
+
+    strategy:
+      matrix:
+        node-version: [21.6.2]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - run: npm install && 
+           npm run build &&
+           npm run watchweb
