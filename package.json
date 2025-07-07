@@ -12,7 +12,8 @@
     "watchhiveonminer": "node dist/watchhiveonminer.js",
     "ftxlending": "node dist/ftxlending.js",
     "watchgit": "node dist/watchgit.js",
-    "watchcurve": "node dist/watchcurve.js"
+    "watchcurve": "node dist/watchcurve.js",
+    "watchweb": "node dist/watchweb.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.8",

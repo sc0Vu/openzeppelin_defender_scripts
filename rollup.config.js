@@ -76,8 +76,7 @@ export default [
       format: 'cjs',
     },
     ...baseConfig
-  }, 
-  {
+  }, {
     input: 'src/watchgit.ts',
     output: {
       file: 'dist/watchgit.js',
@@ -88,6 +87,13 @@ export default [
     input: 'src/watchcurve.ts',
     output: {
       file: 'dist/watchcurve.js',
+      format: 'cjs',
+    },
+    ...baseConfig
+  }, {
+    input: 'src/watchweb.ts',
+    output: {
+      file: 'dist/watchweb.js',
       format: 'cjs',
     },
     ...baseConfig
