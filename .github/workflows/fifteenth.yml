@@ -1,4 +1,4 @@
-name: daily job
+name: fifteenth job
 on:
   workflow_dispatch:
   schedule:
