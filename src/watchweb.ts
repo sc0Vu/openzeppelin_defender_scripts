@@ -77,14 +77,39 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
         continue
       }
       if (web.length > 6) {
-        const strWebInfo = JSON.stringify(webInfo)
-        const hashOld = createHash('sha256').update(web[5]).digest('base64')
-        const hashNew = createHash('sha256').update(strWebInfo).digest('base64')
-        if (hashNew !== hashOld && webInfo.status !== 'ERROR') {
-          // update existing data
-          web[5] = JSON.stringify(webInfo)
-          values[i] = web
-          updatedIDs.push(web[0])
+        if (webInfo.status !== undefined) {
+          if (webInfo.status !== 'ERROR') {
+            const strWebInfo = JSON.stringify(webInfo)
+            const hashOld = createHash('sha256').update(web[5]).digest('base64')
+            const hashNew = createHash('sha256').update(strWebInfo).digest('base64')
+            if (hashNew !== hashOld) {
+              // update existing data
+              web[5] = strWebInfo
+              values[i] = web
+              updatedIDs.push(web[0])
+            }
+          }
+        } else if (webInfo.success !== undefined) {
+          if (webInfo.success) {
+            if (webInfo.data && webInfo.data.notices) {
+              const filteredNotices = webInfo.data.notices.map((a: Record<string,any>) => {
+                a.listed_timestamp = new Date(a.listed_at).getTime();
+                return a;
+              }).sort((a: Record<string,any>, b: Record<string,any>) => a.listed_timestamp < b.listed_timestamp ? 0 :  -1)
+              if (filteredNotices.length > 0) {
+                const firstNotice = filteredNotices[0]
+                const strFirstNotice = JSON.stringify(firstNotice)
+                const hashOld = createHash('sha256').update(web[5]).digest('base64')
+                const hashNew = createHash('sha256').update(strFirstNotice).digest('base64')
+                if (hashNew !== hashOld) {
+                  // update existing data
+                  web[5] = firstNotice
+                  values[i] = web
+                  updatedIDs.push(web[0])
+                }
+              }
+            }
+          }
         }
       }
     }
