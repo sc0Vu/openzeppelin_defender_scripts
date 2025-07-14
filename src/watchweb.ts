@@ -43,8 +43,13 @@ const fetchWebInfo = async (method: string, uri: string, headers: string, body: 
   if (body !== undefined && body !== '') {
     body = JSON.parse(body)
   }
-  const { data } = await axios[method](uri, body, options)
-  return data
+  let res = undefined
+  if (method.toLowerCase() === 'get') {
+    res = await axios[method](uri, options)
+  } else {
+    res = await axios[method](uri, body, options)
+  }
+  return res.data
 }
 
 type SecretInfo = {
@@ -105,7 +110,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
                   // update existing data
                   web[5] = strFirstNotice
                   values[i] = web
-                  updatedIDs.push(web[0])
+                  updatedIDs.push(web[0].trim() + ' - ' + firstNotice.title.trim())
                 }
               }
             }
