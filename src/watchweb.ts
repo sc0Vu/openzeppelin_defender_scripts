@@ -52,6 +52,17 @@ const fetchWebInfo = async (method: string, uri: string, headers: string, body: 
   return res.data
 }
 
+const findPreviousWeekday = () => {
+  // TODO: verify national holiday
+  let weekday = new Date()
+  let daynow = weekday.getDay()
+  while (daynow === 0 || daynow == 6) {
+    weekday = new Date(weekday.getTime() - 86400000)
+    daynow = weekday.getDay()
+  }
+  return weekday.toISOString().split('T')[0]
+}
+
 type SecretInfo = {
   TG_TOKEN: string;
   SHEET_ID: string;
@@ -77,7 +88,13 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
     const updatedIDs = []
     for (let i = 0; i < values.length; i++) {
       let web = values[i]
-      const webInfo = await fetchWebInfo(web[2], web[1], web[4], web[3])
+      let uri = web[1]
+      if (i > 1) {
+        // TODO: refactor this
+        const previousWeekday = findPreviousWeekday()
+        uri += `&b=${previousWeekday}&c=${previousWeekday}`
+      }
+      const webInfo = await fetchWebInfo(web[2], uri, web[4], web[3])
       if (webInfo.length < 0) {
         continue
       }
@@ -113,6 +130,31 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
                   updatedIDs.push(web[0].trim() + ' - ' + firstNotice.title.trim())
                 }
               }
+            }
+          }
+        } else if (webInfo.length > 0) {
+          // raw text
+          const parsedInfo = webInfo.split(' ')
+          if (parsedInfo.length > 2) {
+            const hashOld = createHash('sha256').update(web[5]).digest('base64')
+            const hashNew = createHash('sha256').update(webInfo).digest('base64')
+            if (hashNew === hashOld) {
+              continue
+            }
+            const dates = parsedInfo[0].split(',')
+            const rvals = parsedInfo[1].split(',')
+            const mvals = parsedInfo[2].split(',')
+            if (dates.length > 0 && mvals.length > 0 && rvals > 0) {
+              const ind = dates.length - 1
+              const mval = parseFloat(mvals[ind])
+              const rval = parseFloat(rvals[ind])
+              if (rval > mval) {
+                // TODO: threashold value
+                updatedIDs.push(dates[ind] + ' - ' + rval + ' ' + mval)
+              }
+              // update existing data
+              web[5] = webInfo
+              values[i] = web
             }
           }
         }
