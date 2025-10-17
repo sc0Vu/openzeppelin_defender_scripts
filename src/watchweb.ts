@@ -54,7 +54,8 @@ const fetchWebInfo = async (method: string, uri: string, headers: string, body: 
 
 const findPreviousWeekday = () => {
   // TODO: verify national holiday
-  let weekday = new Date()
+  const now = new Date()
+  let weekday = new Date(now.getTime() - 86400000)
   let daynow = weekday.getDay()
   while (daynow === 0 || daynow == 6) {
     weekday = new Date(weekday.getTime() - 86400000)
@@ -141,6 +142,7 @@ export async function handler({ secrets }: { secrets: SecretInfo }) {
             if (hashNew === hashOld) {
               continue
             }
+            // TODO: compare real value
             const dates = parsedInfo[0].split(',')
             const rvals = parsedInfo[1].split(',')
             const mvals = parsedInfo[2].split(',')
